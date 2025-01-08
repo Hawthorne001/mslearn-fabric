@@ -10,18 +10,16 @@ In this exercise you will build out a medallion architecture in a Fabric lakehou
 
 This exercise should take approximately **45** minutes to complete
 
-> **Note**: You need a Microsoft *school* or *work* account to complete this exercise. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+> **Note**: You need a [Microsoft Fabric trial](https://learn.microsoft.com/fabric/get-started/fabric-trial) to complete this exercise.
 
 ## Create a workspace
 
 Before working with data in Fabric, create a workspace with the Fabric trial enabled.
 
-1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com), select **Synapse Data Engineering**.
+1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric`, select **Power BI**.
 2. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
 3. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
 4. When your new workspace opens, it should be empty.
-
-   ![Screenshot of an empty workspace in Fabric.](./Images/new-workspace-medallion.png)
 
 5. Navigate to the workspace settings and enable the **Data model editing** preview feature. This will enable you to create relationships between tables in your lakehouse using a Power BI semantic model.
 
@@ -33,9 +31,9 @@ Before working with data in Fabric, create a workspace with the Fabric trial ena
 
 Now that you have a workspace, it's time to create a data lakehouse for the data you're going to analyze.
 
-1. In the **Synapse Data Engineering** home page, create a new **Lakehouse** named **Sales**.
+1. In the workspace you just created, create a new **Lakehouse** named **Sales** by clicking the **New item** button.
 
-    After a minute or so, a new empty lakehouse will be created. You need to ingest some data into the data lakehouse for analysis. There are multiple ways to do this, but in this exercise you'll simply download a text file to your local computer (or lab VM if applicable) and then upload it to your lakehouse.
+    After a minute or so, a new empty lakehouse will be created. Next, you'll ingest some data into the data lakehouse for analysis. There are multiple ways to do this, but in this exercise you'll simply download a text file to your local computer (or lab VM if applicable) and then upload it to your lakehouse.
 
 1. Download the data file for this exercise from `https://github.com/MicrosoftLearning/dp-data/blob/main/orders.zip`. Extract the files and save them with their original names on your local computer (or lab VM if applicable). There should be 3 files containing sales data for 3 years: 2019.csv, 2020.csv, and 2021.csv.
 
@@ -154,8 +152,6 @@ Now that you have some data in the bronze layer of your lakehouse, you can use a
 
 11. Select the **...** in the Tables section of the lakehouse explorer pane and select **Refresh**. You should now see the new **sales_silver** table listed. The **&#9650;** (triangle icon) indicates that it's a Delta table.
 
-    ![Screenshot of the sales_silver table in a lakehouse.](./Images/sales-silver-table.png)
-
     > **Note**: If you don't see the new table, wait a few seconds and then select **Refresh** again, or refresh the entire browser tab.
 
 12. Now you're going to perform an **upsert operation** on a Delta table, updating existing records based on specific conditions and inserting new records when no match is found. Add a new code block and paste the following code:
@@ -198,6 +194,7 @@ Now that you have some data in the bronze layer of your lakehouse, you can use a
       ) \
       .execute()
     ```
+13. Run the cell to execute the code using the ****&#9655;** (*Run cell*)** button.
 
     This operation is important because it enables you to update existing records in the table based on the values of specific columns, and insert new records when no match is found. This is a common requirement when you're loading data from a source system that may contain updates to existing and new records.
 
@@ -205,15 +202,15 @@ You now have data in your silver delta table that is ready for further transform
 
 ## Explore data in the silver layer using the SQL endpoint
 
-Now that you have data in your silver layer, you can use the SQL endpoint to explore the data and perform some basic analysis. This is a nice option for you if you're familiar with SQL and want to do some basic exploration of your data. In this exercise we're using the SQL endpoint view in Fabric, but note that you can also use other tools like SQL Server Management Studio (SSMS) and Azure Data Explorer.
+Now that you have data in your silver layer, you can use the SQL analytics endpoint to explore the data and perform some basic analysis. This is useful if you're familiar with SQL and want to do some basic exploration of your data. In this exercise we're using the SQL endpoint view in Fabric, but you can use other tools like SQL Server Management Studio (SSMS) and Azure Data Explorer.
 
-1. Navigate back to your workspace and notice that you now have a few assets listed. Select **SQL endpoint** to open your lakehouse in the SQL endpoint view.
+1. Navigate back to your workspace and notice that you now have several items listed. Select the **Sales SQL analytics endpoint** to open your lakehouse in the SQL analytics endpoint view.
 
     ![Screenshot of the SQL endpoint in a lakehouse.](./Images/sql-endpoint-item.png)
 
 2. Select **New SQL query** from the ribbon, which will open a SQL query editor. Note that you can rename your query using the **...** menu item next to the existing query name in the lakehouse explorer pane.
 
-   We're going to run two sql queries to explore our data.
+   Next, you'll run two sql queries to explore the data.
 
 3. Paste the following query into the query editor and select **Run**:
 
@@ -229,7 +226,7 @@ Now that you have data in your silver layer, you can use the SQL endpoint to exp
 
     ![Screenshot of the results of a SQL query in a lakehouse.](./Images/total-sales-sql.png)
 
-4. Now we'll take a look at which customers are purchasing the most (in terms of quantity). Paste the following query into the query editor and select **Run**:
+4. Next you'll review which customers are purchasing the most (in terms of quantity). Paste the following query into the query editor and select **Run**:
 
     ```sql
     SELECT TOP 10 CustomerName, SUM(Quantity) AS TotalQuantity
@@ -246,13 +243,13 @@ Data exploration at the silver layer is useful for basic analysis, but you'll ne
 
 You have successfully taken data from your bronze layer, transformed it, and loaded it into a silver Delta table. Now you'll use a new notebook to transform the data further, model it into a star schema, and load it into gold Delta tables.
 
-Note that you could have done all of this in a single notebook, but for the purposes of this exercise you're using separate notebooks to demonstrate the process of transforming data from bronze to silver and then from silver to gold. This can help with debugging, troubleshooting, and reuse.
+You could have done all of this in a single notebook, but for this exercise you're using separate notebooks to demonstrate the process of transforming data from bronze to silver and then from silver to gold. This can help with debugging, troubleshooting, and reuse.
 
-1. Return to the **Data Engineering** home page and create a new notebook called **Transform data for Gold**.
+1. Return to the workspace home page and create a new notebook called **Transform data for Gold**.
 
-2. In the lakehouse explorer pane, add your **Sales** lakehouse by selecting **Add** and then selecting the **Sales** lakehouse you created earlier. You should see the **sales_silver** table listed in the **Tables** section of the explorer pane.
+2. In the lakehouse explorer pane, add your **Sales** lakehouse by selecting **Add** and then selecting the **Sales** lakehouse you created earlier. In the **Add Lakehouse** window, select **Existing Lakehouse without Schema**. You should see the **sales_silver** table listed in the **Tables** section of the explorer pane.
 
-3. In the existing code block, remove the boilerplate text and **add the following code** to load data to your dataframe and start building out your star schema, then run it:
+3. In the existing code block, remove the commented text and **add the following code** to load data to your dataframe and start building your star schema, then run it:
 
    ```python
     # Load data to the dataframe as a starting point to create the gold layer
@@ -308,10 +305,10 @@ Note that you could have done all of this in a single notebook, but for the purp
     
     dfUpdates = dfdimDate_gold
     
-    deltaTable.alias('silver') \
+    deltaTable.alias('gold') \
       .merge(
         dfUpdates.alias('updates'),
-        'silver.OrderDate = updates.OrderDate'
+        'gold.OrderDate = updates.OrderDate'
       ) \
        .whenMatchedUpdate(set =
         {
@@ -325,13 +322,13 @@ Note that you could have done all of this in a single notebook, but for the purp
           "Month": "updates.Month",
           "Year": "updates.Year",
           "mmmyyyy": "updates.mmmyyyy",
-          "yyyymm": "yyyymm"
+          "yyyymm": "updates.yyyymm"
         }
       ) \
       .execute()
     ```
 
-    Congrats! Your date dimension is all set up. Now you'll create your customer dimension.
+    The date dimension is now set up. Now you'll create your customer dimension.
 7. To build out the customer dimension table, **add a new code block**, paste and run the following code:
 
     ```python
@@ -396,10 +393,10 @@ Note that you could have done all of this in a single notebook, but for the purp
     
     dfUpdates = dfdimCustomer_gold
     
-    deltaTable.alias('silver') \
+    deltaTable.alias('gold') \
       .merge(
         dfUpdates.alias('updates'),
-        'silver.CustomerName = updates.CustomerName AND silver.Email = updates.Email'
+        'gold.CustomerName = updates.CustomerName AND gold.Email = updates.Email'
       ) \
        .whenMatchedUpdate(set =
         {
@@ -435,7 +432,7 @@ Note that you could have done all of this in a single notebook, but for the purp
 12. **Add another code block** to create the **product_silver** dataframe.
   
     ```python
-    from pyspark.sql.functions import col, split, lit
+    from pyspark.sql.functions import col, split, lit, when
     
     # Create product_silver dataframe
     
@@ -478,10 +475,10 @@ Note that you could have done all of this in a single notebook, but for the purp
             
     dfUpdates = dfdimProduct_gold
             
-    deltaTable.alias('silver') \
+    deltaTable.alias('gold') \
       .merge(
             dfUpdates.alias('updates'),
-            'silver.ItemName = updates.ItemName AND silver.ItemInfo = updates.ItemInfo'
+            'gold.ItemName = updates.ItemName AND gold.ItemInfo = updates.ItemInfo'
             ) \
             .whenMatchedUpdate(set =
             {
@@ -555,10 +552,10 @@ Note that you could have done all of this in a single notebook, but for the purp
     
     dfUpdates = dffactSales_gold
     
-    deltaTable.alias('silver') \
+    deltaTable.alias('gold') \
       .merge(
         dfUpdates.alias('updates'),
-        'silver.OrderDate = updates.OrderDate AND silver.CustomerID = updates.CustomerID AND silver.ItemID = updates.ItemID'
+        'gold.OrderDate = updates.OrderDate AND gold.CustomerID = updates.CustomerID AND gold.ItemID = updates.ItemID'
       ) \
        .whenMatchedUpdate(set =
         {
@@ -611,4 +608,4 @@ If you've finished exploring your lakehouse, you can delete the workspace you cr
 
 1. In the bar on the left, select the icon for your workspace to view all of the items it contains.
 2. In the **...** menu on the toolbar, select **Workspace settings**.
-3. In the **Other** section, select **Remove this workspace**.
+3. In the **General** section, select **Remove this workspace**.

@@ -1,10 +1,10 @@
 ---
 lab:
-    title: 'Explore data science in Microsoft Fabric'
+    title: 'Get started with data science in Microsoft Fabric'
     module: 'Get started with data science in Microsoft Fabric'
 ---
 
-# Explore data science in Microsoft Fabric
+# Get started with data science in Microsoft Fabric
 
 In this lab, you'll ingest data, explore the data in a notebook, process the data with the Data Wrangler, and train two types of models. By performing all these steps, you'll be able to explore the data science features in Microsoft Fabric.
 
@@ -12,13 +12,13 @@ By completing this lab, you'll gain hands-on experience in machine learning and 
 
 This lab will take approximately **20** minutes to complete.
 
-> **Note**: You need a Microsoft *school* or *work* account to complete this exercise. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+> **Note**: You need a [Microsoft Fabric trial](https://learn.microsoft.com/fabric/get-started/fabric-trial) to complete this exercise.
 
 ## Create a workspace
 
 Before working with data in Fabric, create a workspace with the Fabric trial enabled.
 
-1. Navigate to the Microsoft Fabric home page at [https://app.fabric.microsoft.com](https://app.fabric.microsoft.com) in a browser.
+1. Navigate to the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric` in a browser.
 1. Select **Synapse Data Science**.
 1. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
 1. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
@@ -94,7 +94,7 @@ Now you're ready to run code to get data and train a model. You'll work with the
     The output shows the rows and columns of the diabetes dataset.
 
 1. There are two tabs at the top of the rendered table: **Table** and **Chart**. Select **Chart**.
-1. Select the **View options** at the right top of the chart to change the visualization.
+1. Select the **Customize chart** at the right top of the chart to change the visualization.
 1. Change the chart to the following settings:
     * **Chart Type**: `Box plot`
     * **Key**: *Leave empty*
@@ -105,15 +105,14 @@ Now you're ready to run code to get data and train a model. You'll work with the
 
 Now that you have ingested and explored the data, you can transform the data. You can either run code in a notebook, or use the Data Wrangler to generate code for you.
 
-1. The data is loaded as a Spark dataframe. To launch the Data Wrangler, you need to convert the data to a Pandas dataframe. Run the following code in your notebook:
+1. The data is loaded as a Spark dataframe. While the Data Wrangler accepts either Spark or Pandas dataframes, it is currently optimized to work with Pandas. Therefore, you will convert the data to a Pandas dataframe. Run the following code in your notebook:
 
     ```python
    df = df.toPandas()
    df.head()
     ```
 
-1. Select **Data** in the notebook ribbon, and then select **Transform DataFrame in Data Wrangler** dropdown.
-1. Select the `df` dataset. When Data Wrangler launches, it generates a descriptive overview of the dataframe in the **Summary** panel.
+1. Select **Data Wrangler** in the notebook ribbon, and then select the `df` dataset. When Data Wrangler launches, it generates a descriptive overview of the dataframe in the **Summary** panel.
 
     Currently, the label column is `Y`, which is a continuous variable. To train a machine learning model that predicts Y, you need to train a regression model. The (predicted) values of Y may be difficult to interpret. Instead, we could explore training a classification model which predicts whether someone is low risk or high risk for developing diabetes. To be able to train a classification model, you need to create a binary label column based on the values from `Y`.
 
@@ -249,4 +248,4 @@ If you've finished exploring your model and experiments, you can delete the work
 
 1. In the bar on the left, select the icon for your workspace to view all of the items it contains.
 2. In the **...** menu on the toolbar, select **Workspace settings**.
-3. In the **Other** section, select **Remove this workspace** .
+3. In the **General** section, select **Remove this workspace** .

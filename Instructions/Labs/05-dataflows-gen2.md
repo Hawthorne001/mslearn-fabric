@@ -4,19 +4,19 @@ lab:
     module: 'Ingest Data with Dataflows Gen2 in Microsoft Fabric'
 ---
 
-# Create a Dataflow (Gen2) in Microsoft Fabric
+# Create and use Dataflows (Gen2) in Microsoft Fabric
 
 In Microsoft Fabric, Dataflows (Gen2) connect to various data sources and perform transformations in Power Query Online. They can then be used in Data Pipelines to ingest data into a lakehouse or other analytical store, or to define a dataset for a Power BI report.
 
 This lab is designed to introduce the different elements of Dataflows (Gen2), and not create a complex solution that may exist in an enterprise. This lab takes **approximately 30 minutes** to complete.
 
-> **Note**: You need a Microsoft *school* or *work* account to complete this exercise. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+> **Note**: You need a [Microsoft Fabric trial](https://learn.microsoft.com/fabric/get-started/fabric-trial) to complete this exercise.
 
 ## Create a workspace
 
 Before working with data in Fabric, create a workspace with the Fabric trial enabled.
 
-1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com), select **Synapse Data Engineering**.
+1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric`, select **Data Engineering**.
 1. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
 1. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
 1. When your new workspace opens, it should be empty.
@@ -27,7 +27,7 @@ Before working with data in Fabric, create a workspace with the Fabric trial ena
 
 Now that you have a workspace, it's time to create a data lakehouse into which you'll ingest data.
 
-1. In the **Synapse Data Engineering** home page, create a new **Lakehouse** with a name of your choice.
+1. In the **Data Engineering** home page, create a new **Lakehouse** with a name of your choice.
 
     After a minute or so, a new empty lakehouse will be created.
 
@@ -37,7 +37,7 @@ Now that you have a workspace, it's time to create a data lakehouse into which y
 
 Now that you have a lakehouse, you need to ingest some data into it. One way to do this is to define a dataflow that encapsulates an *extract, transform, and load* (ETL) process.
 
-1. In the home page for your workspace, select **New Dataflow Gen2**. After a few seconds, the Power Query editor for your new dataflow opens as shown here.
+1. In the home page for your workspace, select **Get data** > **New Dataflow Gen2**. After a few seconds, the Power Query editor for your new dataflow opens as shown here.
 
  ![New dataflow.](./Images/new-dataflow.png)
 
@@ -82,7 +82,7 @@ Now that you have a lakehouse, you need to ingest some data into it. One way to 
 
    ![Data destination configuration page.](./Images/data-destination-target.png)
 
-4. On the **Choose destination settings** page, select **Append** and then **Save settings**.
+4. Select **Next** and on the **Choose destination settings** page, disable the **Use automatic settings** option, select **Append** and then **Save settings**.
     > **Note:** We suggest using the *Power query* editor for updating data types, but you can also do so from this page, if you prefer.
 
     ![Data destination settings page.](./Images/destination-settings.png)
@@ -93,13 +93,11 @@ Now that you have a lakehouse, you need to ingest some data into it. One way to 
 
 6. Select **Publish** to publish the dataflow. Then wait for the **Dataflow 1** dataflow to be created in your workspace.
 
-7. Once published, you can right-click on the dataflow in your workspace, select **Properties**, and rename your dataflow.
-
 ## Add a dataflow to a pipeline
 
 You can include a dataflow as an activity in a pipeline. Pipelines are used to orchestrate data ingestion and processing activities, enabling you to combine dataflows with other kinds of operation in a single, scheduled process. Pipelines can be created in a few different experiences, including Data Factory experience.
 
-1. From your Fabric-enabled workspace, make sure you're still in the **Data Engineering** experience. Select **New**, **Data pipeline**, then when prompted, create a new pipeline named **Load data**.
+1. From your Fabric-enabled workspace, make sure you're still in the **Data Engineering** experience. Select **+ New item** > **Data pipeline**, then when prompted, create a new pipeline named **Load data**.
 
    The pipeline editor opens.
 
@@ -123,7 +121,7 @@ You can include a dataflow as an activity in a pipeline. Pipelines are used to o
 
    ![Table loaded by a dataflow.](./Images/loaded-table.png)
 
-> **Tip**: Use the Power BI Desktop *Dataflows connector* to connect directly to the data transformations done with your dataflow.
+> **Tip**: In Power BI Desktop, you can connect directly to the data transformations done with your dataflow by using the *Power BI dataflows (Legacy)* connector.
 >
 > You can also make additional transformations, publish as a new dataset, and distribute with intended audience for specialized datasets.
 >
@@ -135,6 +133,5 @@ If you've finished exploring dataflows in Microsoft Fabric, you can delete the w
 
 1. Navigate to Microsoft Fabric in your browser.
 1. In the bar on the left, select the icon for your workspace to view all of the items it contains.
-1. In the **...** menu on the toolbar, select **Workspace settings**.
-1. In the **Other** section, select **Remove this workspace**.
-1. Don't save the changes to Power BI Desktop, or delete the .pbix file if already saved.
+1. Select **Workspace settings** and in the **General** section, scroll down and select **Remove this workspace**.
+1. Select **Delete** to delete the workspace.

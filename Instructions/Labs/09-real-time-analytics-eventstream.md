@@ -1,169 +1,245 @@
 ---
 lab:
-    title: 'Get started with Real-Time Analytics in Microsoft Fabric'
-    module: 'Get started with Real-Time Analytics in Microsoft Fabric'
+    title: 'Ingest real-time data with Eventstream in Microsoft Fabric'
+    module: 'Ingest real-time data with Eventstream in Microsoft Fabric'
 ---
-# Get started with Eventstream in Real-Time Analytics (RTA)
+# Ingest real-time data with Eventstream in Microsoft Fabric
 
-Eventstream is a feature in Microsoft Fabric that captures, transforms, and routes real-time events to various destinations with a no-code experience. You can add event data sources, routing destinations, and the event processor, when the transformation is needed, to the eventstream. Microsoft Fabric's EventStore is a monitoring option that maintains events from the cluster and provides a way to understand the state of your cluster or workload at a given point in time. The EventStore service can be queried for events that are available for each entity and entity type in your cluster. This means you can query for events on different levels, such as clusters, nodes, applications, services, partitions, and partition replicas. The EventStore service also has the ability to correlate events in your cluster. By looking at events that were written at the same time from different entities that may have impacted each other, the EventStore service can link these events to help with identifying causes for activities in your cluster. Another option for monitoring and diagnostics of Microsoft Fabric clusters is aggregating and collecting events using EventFlow.
+Eventstream is a feature in Microsoft Fabric that captures, transforms, and routes real-time events to various destinations. You can add event data sources, destinations, and transformations to the eventstream.
+
+In this exercise, you'll ingest data from a sample data source that emits a stream of events related to observations of bicycle collection points in a bike-share system in which people can rent bikes within a city.
 
 This lab takes approximately **30** minutes to complete.
 
-> **Note**: You'll need a Microsoft Fabric license to complete this exercise. See [Getting started with Fabric](https://learn.microsoft.com/fabric/get-started/fabric-trial) for details of how to enable a free Fabric trial license. You will need a Microsoft *school* or *work* account to do this. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+> **Note**: You need a [Microsoft Fabric tenant](https://learn.microsoft.com/fabric/get-started/fabric-trial) to complete this exercise.
 
 ## Create a workspace
 
-Before working with data in Fabric, create a workspace with the Fabric trial enabled.
+Before working with data in Fabric, you need to create a workspace with the Fabric capacity enabled.
 
-1. Sign into [Microsoft Fabric](https://app.fabric.microsoft.com) at `https://app.fabric.microsoft.com` and select **Power BI**.
-2. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
-3. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
-4. When your new workspace opens, it should be empty, as shown here:
+1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric`, select **Real-Time Intelligence**.
+1. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
+1. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
+1. When your new workspace opens, it should be empty.
 
-   ![Screenshot of an empty workspace in Power BI.](./Images/new-workspace.png)
-5. At the bottom left of the Power BI portal, select the **Power BI** icon and switch to the **Real-Time Analytics** experience.
+    ![Screenshot of an empty workspace in Fabric.](./Images/new-workspace.png)
 
-## Scenario
+## Create an eventhouse
 
-With Fabric eventstreams, you can easily manage your event data in one place. You can collect, transform, and send real-time event data to different destinations in the format you want. You can also connect your eventstreams with Azure Event Hubs, KQL database, and Lakehouse without any hassle.
+Now that you have a workspace, you can start creating the Fabric items you'll need for your real-time intelligence solution. we'll start by creating an eventhouse.
 
-This lab is based on sample streaming data called Stock Market Data. The Stock Market sample data is a dataset of a stock exchange with a preset schema column such as time, symbol, price, volume and more. You'll use this sample data to simulate real-time events of stock prices and analyze them with various destinations, such as the KQL database.
+1. On the menu bar on the left, select **Home**; and then in the Real-Time Intelligence home page, create a new **Eventhouse**, giving it a unique name of your choice.
+1. Close any tips or prompts that are displayed until you see your new empty eventhouse.
 
-Use Real-Time Analytics streaming and query capabilities to answer key questions about the stock statistics. In this scenario, we're going to take full advantage of the wizard instead of manually creating some components independently, such as the KQL Database.
+    ![Screenshot of a new eventhouse](./Images/create-eventhouse.png)
 
-In this tutorial, you'll learn how to:
+1. In the pane on the left, note that your eventhouse contains a KQL database with the same name as the eventhouse.
+1. Select the KQL database to view it.
 
-- Create a KQL database
-- Enable data copy to OneLake
-- Create an eventstream
-- Stream data from an eventstream to your KQL database
-- Explore data with KQL and SQL
-
-## Create a KQL Database
-
-1. Within the **Real-Time Analytics**, select the **KQL Database** box.
-
-   ![Image of choose kqldatabase](./Images/select-kqldatabase.png)
-
-2. You'll be prompted to **Name** the KQL Database
-
-   ![Image of name kqldatabase](./Images/name-kqldatabase.png)
-
-3. Give the KQL Database a name that you'll remember, such as **MyStockData**, press **Create**.
-
-1. In the **Database details** panel, select the pencil icon to turn on availability in OneLake.
-
-   ![Image of enable onlake](./Images/enable-onelake-availability.png)
-
-2. Make sure to toggle the button to **Active** and then select **Done**.
-
-   ![Image of enable onelake toggle](./Images/enable-onelake-toggle.png)
+    Currently there are no tables in the database. In the rest of this exercise you'll use an eventstream to load data from a real-time source into a table.
 
 ## Create an Eventstream
 
-1. In the menu bar, select **Real-Time Analytics** (the icon looks similar to ![rta logo](./Images/rta_logo.png))
-2. Under **New**, select **EventStream (Preview)**
+1. In the main page of your KQL database, select **Get data**.
+2. For the data source, select **Eventstream** > **New eventstream**. Name the Eventstream `Bicycle-data`.
 
-   ![Image of choose eventstream](./Images/select-eventstream.png)
+    The creation of your new event stream in the workspace will be completed in just a few moments. Once established, you will be automatically redirected to the primary editor, ready to begin integrating sources into your event stream.
 
-3. You'll be prompted to **Name** your eventstream. Give the EventStream a name that you'll remember, such as **MyStockES**, press the **Create** button.
+    ![Screenshot of a new eventstream.](./Images/empty-eventstream.png)
 
-   ![Image of name eventstream](./Images/name-eventstream.png)
+## Add a source
 
-## Establish an eventstream source and destination
+1. In the Eventstream canvas, select **Use sample data**.
+2. Name the source `Bicycles`, and select the **Bicycles** sample data.
 
-1. In the Eventstream canvas, select **New source** from the drop-down list, then select **Sample Data**.
+    Your stream will be mapped and you will be automatically displayed on the **eventstream canvas**.
 
-   ![Image of EventStream canvas](./Images/real-time-analytics-canvas.png)
+   ![Review the eventstream canvas](./Images/real-time-intelligence-eventstream-sourced.png)
 
-2. Enter the values for your Sample Data as shown in the following table and then select **Add**.
+## Add a destination
 
-   | Field       | Recommended Value |
-   | ----------- | ----------------- |
-   | Source name | StockData         |
-   | Sample data | Stock Market      |
+1. Use the **+** icon to the right of the **Bicycle-data** node to add a new **Eventhouse** node.
+1. Use the *pencil* icon in the new eventhouse node to edit it.
+1. In the **Eventhouse** pane, configure the following setup options.
+   - **Data ingestion mode:**: Event processing before ingestion
+   - **Destination name:** `bikes-table`
+   - **Workspace:** *Select the workspace you created at the beginning of this exercise*
+   - **Eventhouse**: *Select your eventhouse*
+   - **KQL database:** *Select your KQL database*
+   - **Destination table:** Create a new table named `bikes`
+   - **Input data format:** JSON
 
-3. Now add a destination by selecting **New destination** and then select **KQL Database**
+   ![Eventstream destination settings.](./Images/kql-database-event-processing-before-ingestion.png)
 
-   ![Image of EventStream destination](./Images/new-kql-destination.png)
+1. In the **Eventhouse** pane, select **Save**. 
+1. On the toolbar, select **Publish**.
+1. Wait a minute or so for the data destination to become active. Then select the **bikes-table** node in the design canvas and view the **Data preview** pane underneath to see the latest data that has been ingested:
 
-4. In the KQL Database configuration use the following table to complete the configuration.
+   ![A destination table in an eventstream.](./Images/stream-data-preview.png)
 
-   | Field            | Recommended Value                              |
-   | ---------------- | ---------------------------------------------- |
-   | Destination Name | MyStockData                                    |
-   | Workspace        | The workspace where you created a KQL database |
-   | KQL Database     | MyStockData                                    |
+1. Wait a few minutes and then use the **Refresh** button to refresh the **Data preview** pane. The stream is running perpetually, so new data may have been added to the table.
+1. Beneath the eventstream design canvas, view the **Data insights** tab to see details of the data events that have been captured.
 
-3. Select **Create and configure**.
+## Query captured data
 
-## Configure data ingestion
+The eventstream you have created takes data from the sample source of bicycle data and loads it into the database in your eventhouse. You can analyze the captured data by querying the table in the database.
 
-1. In the **Ingest data** dialogue page, Select the **New Table**, enter MyStockData.
+1. In the menu bar on the left, select your KQL database.
+1. On the **database** tab, in the toolbar for your KQL database, use the **Refresh** button to refresh the view until you see the **bikes** table under the database. Then select the **bikes** table.
 
-   ![Image of insert stock data](./Images/ingest-stream-data-to-kql.png)
+   ![A table in a KQL database.](./Images/kql-table.png)
 
-2. Select **Next: Source**.
-3. In the **Source** page confirm the **Data connection name**, then select **Next: Schema**.
+1. In the **...** menu for the **bikes** table, select **Query table** > **Records ingested in the last 24 hours**.
+1. In the query pane, note that the following query has been generated and run, with the results shown beneath:
 
-   ![Image of data source name](./Images/ingest-data.png)
+    ```kql
+    // See the most recent data - records ingested in the last 24 hours.
+    bikes
+    | where ingestion_time() between (now(-1d) .. now())
+    ```
 
-4. The incoming data is uncompressed for sample data, so keep the compression type as uncompressed.
-5. From the **Data Format** dropdown, select **JSON**.
+1. Select the query code and run it to see 100 rows of data from the table.
 
-   ![Image of Change to JSON](./Images/injest-as-json.png)
+    ![Screenshot of a KQL query.](./Images/kql-query.png)
 
-6. After that, it may be necessary to change some or all data types from your incoming stream to your destination(s) tables.
-7. You can accomplish this task by selecting the **down arrow>Change data type**. Then verify that the columns reflect the correct data type:
+## Transform event data
 
-   ![Image of change data types](./Images/change-data-type-in-es.png)
+The data you've captured is unaltered from the source. In many scenarios, you may want to transform the data in the event stream before loading it into a destination.
 
-8. When finished, select **Next: Summary**
+1. In the menu bar on the left, select the **Bicycle-data** eventstream.
+1. On the toolbar, select **Edit** to edit the eventstream.
+1. In the **Transform events** menu, select **Group by** to add a new **Group by** node to the eventstream.
+1. Drag a connection from the output of the **Bicycle-data** node to the input of the new **Group by** node Then use the *pencil* icon in the **Group by** node to edit it.
 
-Wait for all the steps to be marked with green check marks. You should see the page title **Continuous ingestion from Eventsream established.** After that, select **Close** to return to your Eventstream page.
+   ![Add group by to the transformation event.](./Images/eventstream-add-aggregates.png)
 
-> **Note**: It may be necessary to refresh the page to view your table after the Eventstream connection has been built and established
+1. Configure out the properties of the **Group by** settings section:
+    - **Operation name:** GroupByStreet
+    - **Aggregate type:** *Select* Sum
+    - **Field:** *select* No_Bikes. *Then select **Add** to create the function* SUM of No_Bikes
+    - **Group aggregations by (optional):** Street
+    - **Time window**: Tumbling
+    - **Duration**: 5 seconds
+    - **Offset**: 0 seconds
 
-## KQL Queries
+    > **Note**: This configuration will cause the eventstream to calculate the total number of bicycles in each street every 5 seconds.
+      
+1. Save the configuration and return to the eventstream canvas, where an error is indicated (because you need to store the output from the transformation somewhere!).
 
-Kusto Query Language (KQL) is a read-only request to process data and return results. The request is stated in plain text, using a data-flow model that is easy to read, author, and automate. Queries always run in the context of a particular table or database. At a minimum, a query consists of a source data reference and one or more query operators applied in sequence, indicated visually by the use of a pipe character (|) to delimit operators. For more information on the Kusto Query Language, see [Kusto Query Language (KQL) Overview](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/?context=%2Ffabric%2Fcontext%2Fcontext)
+1. Use the **+** icon to the right of the **GroupByStreet** node to add a new **Eventhouse** node.
+1. Configure the new eventhouse node with the following options:
+   - **Data ingestion mode:**: Event processing before ingestion
+   - **Destination name:** `bikes-by-street-table`
+   - **Workspace:** *Select the workspace you created at the beginning of this exercise*
+   - **Eventhouse**: *Select your eventhouse*
+   - **KQL database:** *Select your KQL database*
+   - **Destination table:** Create a new table named `bikes-by-street`
+   - **Input data format:** JSON
 
-> **Note**: The KQL Editor comes with both syntax and Inellisense highlighting, which allows you to quickly gain knowledge of the Kusto Query Language (KQL).
+    ![Screenshot of a table for grouped data.](./Images/group-by-table.png)
 
-1. Browse to your newly created and hydrated KQL Database named **MyStockData**.
-2. In the Data tree, select the More menu [...] on the MyStockData table. Then select Query table > Show any 100 records.
+1. In the **Eventhouse** pane, select **Save**. 
+1. On the toolbar, select **Publish**.
+1. Wait a minute or so for the changes to become active.
+1. In the design canvas, select the **bikes-by-street-table** node, and view the **data preview** pane beneath the canvas.
 
-   ![Image of KQL Query set](./Images/kql-query-sample.png)
+    ![Screenshot of a table for grouped data.](./Images/stream-table-with-windows.png)
 
-3. The sample query opens in the **Explore your data** pane with the table context already populated. This first query uses the take operator to return a sample number of records, and is useful to get a first look at the data structure and possible values. The auto populated sample queries are automatically run. You can see the query results in the results pane.
+    Note that the trasformed data includes the grouping field you specified (**Street**), the aggregation you specified (**SUM_no_Bikes**), and a timestamp field indicating the end of the 5 second tumbling window in which the event occurred (**Window_End_Time**).
 
-   ![Image of KQL Query results](./Images/kql-query-results.png)
+## Query the transformed data
 
-4. Return to the data tree to select the next query, which uses the where operator and between operator to return records ingested in the last 24 hours.
+Now you can query the bicycle data that has been transformed and loaded into a table by your eventstream
 
-   ![Image of KQL Query Results last 24](./Images/kql-query-results-last24.png)
+1. In the menu bar on the left, select your KQL database.
+1. 1. On the **database** tab, in the toolbar for your KQL database, use the **Refresh** button to refresh the view until you see the **bikes-by-street** table under the database.
+1. In the **...** menu for the **bikes-by-street** table, select **Query data** > **Show any 100 records**.
+1. In the query pane, note that the following query is generated and run:
 
-> **Note**: Notice that the volumes of the streaming data exceed the query limits. This behavior may vary depending on the amount of data streamed into your database.
+    ```kql
+    ['bikes-by-street']
+    | take 100
+    ```
 
-You can continue to navigate using the built-in query functions to familiarize yourself with your data.
+1. Modify the KQL query to retrieve the total number of bikes per street within each 5 second window:
 
-## Sample SQL Queries
+    ```kql
+    ['bikes-by-street']
+    | summarize TotalBikes = sum(tolong(SUM_No_Bikes)) by Window_End_Time, Street
+    | sort by Window_End_Time desc , Street asc
+    ```
 
-The query editor supports the use of T-SQL in addition to its primary query Kusto Query Language (KQL). T-SQL can be useful for tools that are unable to use KQL. For more information, see [Query data using T-SQL](https://learn.microsoft.com/en-us/azure/data-explorer/t-sql)
+1. Select the modified query and run it.
 
-1. Back In the Data tree, select the **More menu** [...] on the MyStockData table. Select **Query table > SQL > Show any 100 records**.
+    The results show the number of bikes observed in each street within each 5 second time period.
 
-   ![Image of sql query sample](./Images/sql-query-sample.png)
+    ![Screenshot of a query returning grouped data.](./Images/kql-group-query.png)
 
-2. Place your cursor somewhere within the query and select **Run** or press **Shift + Enter**.
+<!--
+## Add an Activator destination
 
-   ![Image of sql query results](./Images/sql-query-results.png)
+So far, you've used an eventstream to load data into tables in an eventhouse. You can also direct streams to an activator and automate actions based on values in the event data.
 
-You can continue to navigate using the build-in functions and familiarize yourself with the data using SQL or KQL. This ends the lesson.
+1. In the menu bar on the left, return to the **Bicycle-data** eventstream. Then in the eventstream page, on the toolbar, select **Edit**.
+1. In the **Add destination** menu, select **Activator**. Then drag a connection from the output of the **Bicycle-data** stream to the input of the new Activator destination.
+1. Configure the new Activator destination with the following settings:
+    - **Destination name**: `low-bikes-activator`
+    - **Workspace**: *Select your workspace*
+    - **Activator**: *Create a **new** activator named `low-bikes`*
+    - **Input data format**: Json
+
+    ![Screenshot of an Activator destination.](./Images/activator-destination.png)
+
+1. Save the new destination.
+1. In the menu bar on the left, select your workspace to see all of the items you have created so far in this exercise - including the new **low-bikes** activator.
+1. Select the **low-bikes** activator to view its page, and then on the activator page select **Get data**.
+1. On the **select a data source** dialog box, scroll down until you see **Data streams** and then select the **Bicycle-data-stream**.
+
+    ![Screenshot of data sources for an activator.](./Images/select-activator-stream.png)
+
+1. Use the **Next**,  **Connect**, and **Finish** buttons to connect the stream to the activator.
+
+    > **Tip**: If the data preview obscures the **Next** button, close the dialog box, select the stream again, and click **Next** before the preview is rendered.
+
+1. When the stream has been connected, the activator page displays the **Events** tab:
+
+    ![Screenshot of the activator Events page.](./Images/activator-events-page.png)
+
+1. Add a new rule, and configure its definition with the following settings:
+    - **Monitor**:
+        - **Event**: Bicycle-data-stream-event
+    - **Condition**
+        - **Condition 1**:
+            - **Operation**: Numeric state: Is less than or equal to
+            - **Column**: No_Bikes
+            - **Value**: 3
+            - **Default type**: Same as window size
+    - **Action**:
+        - **Type**: Email
+        - **To**: *The email address for the account you are using in this exercise*
+        - **Subject**: `Low bikes`
+        - **Headline**: `The number of bikes is low`
+        - **Message**: `More bikes are needed.`
+        - **Context**: *Select the **Neighborhood**, **Street**, and **No-Bikes** columns.
+
+    ![Screenshot of an activator rule definition.](./Images/activator-rule.png)
+
+1. Save and start the rule.
+1. View the **Analytics** tab for the rule, which should show each instance if the condition being met as the stream of events is ingested by your eventstream.
+
+    Each instance will result in an email being sent notifying you of low bikes, which will result in a large numbers of emails, so...
+
+1. On the toolbar, select **Stop** to stop the rule from being processed.
+
+-->
 
 ## Clean up resources
 
-In this exercise, you have created a KQL database and set up continuous streaming with eventstream. After that you queried the data using KQL and SQL. When you've finished exploring your KQL database, you can delete the workspace you created for this exercise.
+In this exercise, you have created an eventhouse and pipulated tables in its database by using an eventstream.
+
+When you've finished exploring your KQL database, you can delete the workspace you created for this exercise.
+
 1. In the bar on the left, select the icon for your workspace.
-2. In the ... menu on the toolbar, select Workspace settings.
-3. In the Other section, select Remove this workspace.
+2. In the toolbar, select **Workspace settings**.
+3. In the **General** section, select **Remove this workspace**.
+.

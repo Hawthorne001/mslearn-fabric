@@ -1,10 +1,10 @@
 ---
 lab:
-    title: 'Generate and save batch predictions'
+    title: 'Generate batch predictions using a deployed model in Microsoft Fabric'
     module: 'Generate batch predictions using a deployed model in Microsoft Fabric'
 ---
 
-# Generate and save batch predictions
+# Generate batch predictions using a deployed model in Microsoft Fabric
 
 In this lab, you'll use a machine learning model to predict a quantitative measure of diabetes.
 
@@ -12,13 +12,13 @@ By completing this lab, you'll gain hands-on experience in generating prediction
 
 This lab will take approximately **20** minutes to complete.
 
-> **Note**: You need a Microsoft *school* or *work* account to complete this exercise. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+> **Note**: You need a [Microsoft Fabric trial](https://learn.microsoft.com/fabric/get-started/fabric-trial) to complete this exercise.
 
 ## Create a workspace
 
 Before working with data in Fabric, create a workspace with the Fabric trial enabled.
 
-1. Navigate to the Microsoft Fabric home page at `https://app.fabric.microsoft.com` in a browser.
+1. Navigate to the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric` in a browser.
 1. In the Microsoft Fabric home page, select **Synapse Data Science**
 1. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
 1. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
@@ -129,7 +129,7 @@ First, let's train a machine learning model that uses a *regression* algorithm t
 
 To use the model, you're going to need a dataset of patient details for whom you need to predict a diabetes diagnosis. You'll create this dataset as a table in a Microsoft Fabric Lakehouse.
 
-1. In the Notebook editor, in the **Lakehouses** pane on the left, select **Add** to add a lakehouse.
+1. In the Notebook editor, in the **Explorer** pane on the left, select **+ Data sources** to add a lakehouse.
 1. Select **New lakehouse** and select **Add**, and create a new **Lakehouse** with a valid name of your choice.
 1. When asked to stop the current session, select **Stop now** to restart the notebook.
 1. When the lakehouse is created and attached to your notebook, add a new code cell run the following code to create a dataset and save it in a table in the lakehouse:
@@ -167,7 +167,7 @@ To use the model, you're going to need a dataset of patient details for whom you
 
    # Save the data in a delta table
    table_name = "diabetes_test"
-   df.write.format("delta").mode("overwrite").save(f"Tables/{table_name}")
+   df.write.format("delta").mode("overwrite").saveAsTable(table_name)
    print(f"Spark dataframe saved to delta table: {table_name}")
     ```
 
@@ -196,7 +196,7 @@ Now you can use the model you trained previously to generate diabetes progressio
    df_test = model.transform(df)
 
    # Save the results (the original features PLUS the prediction)
-   df_test.write.format('delta').mode("overwrite").option("mergeSchema", "true").save(f"Tables/{table_name}")
+   df_test.write.format('delta').mode("overwrite").option("mergeSchema", "true").saveAsTable(table_name)
     ```
 
 1. After the code has finished, select the **...** next to the **diabetes_test** table in the **Lakehouse explorer** pane, and select **Refresh**. A new field **predictions** has been added.
@@ -210,4 +210,4 @@ If you've finished exploring the notebook, you can delete the workspace that you
 
 1. In the bar on the left, select the icon for your workspace to view all of the items it contains.
 2. In the **...** menu on the toolbar, select **Workspace settings**.
-3. In the **Other** section, select **Remove this workspace** .
+3. In the **General** section, select **Remove this workspace** .
