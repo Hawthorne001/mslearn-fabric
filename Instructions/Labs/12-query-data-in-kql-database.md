@@ -1,310 +1,257 @@
 ---
 lab:
-    title: 'Query data in KQL Database'
-    module: 'Query data from a Kusto Query database in Microsoft Fabric'
+    title: 'Work with data in a Microsoft Fabric eventhouse'
+    module: 'Work with data in a Microsoft Fabric eventhouse'
 ---
 
-# Get started with querying a Kusto database in Microsoft Fabric
+# Work with data in a Microsoft Fabric eventhouse
 
-A KQL Queryset is a tool that allows you to execute queries, modify, and display query results from a KQL database. You can link each tab in the KQL Queryset to a different KQL database, and save your queries for future use or share them with others for data analysis. You can also switch the KQL database for any tab, so you can compare the query results from different data sources.
+In Microsoft Fabric, an *eventhouse* is used to store real-time data related to events; often captured from a streaming data source by an *eventstream*.
 
-The KQL Queryset uses the Kusto Query language, which is compatible with many SQL functions, to create queries. To learn more about the [kusto query (KQL)language](https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/?context=%2Ffabric%2Fcontext%2Fcontext).
+Within an eventhouse, the data is stored in one or more KQL databases, each of which contains tables and other objects that you can query by using Kusto Query Language (KQL) or a subset of Structured Query Language (SQL).
 
-This lab takes approximately **25** minutes to complete.
+In this exercise, you'll create and populate an eventhouse with some sample data related to taxi rides, and then query the data using KQL and SQL.
 
-## Scenario
-
-In this scenario, you're an analyst that's tasked with querying a sample dataset of raw metrics NYC taxicab rides that you pull summary statistics (profiling) the data from the Fabric environment. You use KQLto query this data and gather information in order to gain informational insights about the data.
-
-> **Note**: You need a Microsoft *school* or *work* account to complete this exercise. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+This exercise takes approximately **25** minutes to complete.
 
 ## Create a workspace
 
-Before working with data in Fabric, create a workspace with the Fabric trial enabled.
+Before working with data in Fabric, create a workspace with the Fabric capacity enabled.
 
-1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com), select **Real-Time Analytics**.
+1. Navigate to the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric` in a browser and sign in with your Fabric credentials.
 1. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
 1. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
 1. When your new workspace opens, it should be empty.
 
     ![Screenshot of an empty workspace in Fabric.](./Images/new-workspace.png)
 
-In this lab, you use the Real-Time Analytics (RTA) in Fabric to create a KQL database from a sample eventstream. Real-Time Analytics conveniently provides a sample dataset that you can use to explore RTA's capabilities. You use this sample data to create KQL/SQL queries and querysets that analyzes real-time data and allow for other uses in downstream processes.
+## Create an Eventhouse
 
-## Create a KQL Database
+Now that you have a workspace with support for a Fabric capacity, you can create an eventhouse in it.
 
-1. Within the **Real-Time Analytics**, select the **KQL Database** box.
+1. In the menu bar on the left, select **Workloads**. Then, select the **Real-Time Intelligence** tile.
+1. On the **Real-Time Intelligence** home page, select the **Explore Real-Time Intelligence Sample** tile. It will automatically create an eventhouse called **RTISample**:
 
-   ![Image of choose KQL Database](./Images/select-kqldatabase.png)
+   ![Screenshot of a new eventhouse with sample data.](./Images/create-eventhouse-sample.png)
 
-1. You're prompted to **Name** the KQL Database
+1. In the pane on the left, note that your eventhouse contains a KQL database with the same name as the eventhouse.
+1. Verify that a **Bikestream** table has also been created.
 
-   ![Image of name KQL Database](./Images/name-kqldatabase.png)
+## Query data by using KQL
 
-1. Give the KQL Database a name that you remember, such as **MyStockData**, press **Create**.
+Kusto Query Language (KQL) is an intuitive, comprehensive language that you can use to query a KQL database.
 
-1. In the **Database details** panel, select the pencil icon to turn on availability in OneLake.
+### Retrieve data from a table with KQL
 
-   ![Image of enable onelake](./Images/enable-onelake-availability.png)
+1. In the left pane of the eventhouse window, under your KQL database, select the default **queryset** file. This file contains some sample KQL queries to get you started.
+1. Modify the first example query as follows.
 
-   Then use the slider to turn on the availability.
-
-   ![Image of selecting the slider in Data Lake](./Images/data-availability-data-lake.png)
-   
-1. Select **sample data** box from the options of ***Start by getting data***.
-
-   ![Image of selection options with sample data highlighted](./Images/load-sample-data.png)
-
-   Then choose the **Automotive operations analytics** box from the options for sample data.
-
-   ![Image of choosing analytics data for lab](./Images/create-sample-data.png)
-
-1. Once the data is finished loading, we can verify the KQL Database is populated.
-
-   ![Data being loaded into the KQL Database](./Images/choose-automotive-operations-analytics.png)
-
-1. Once the data is loaded, verify the data is loaded into the KQL database. You can accomplish this operation by selecting the ellipses to the right of the table, navigating to **Query table** and selecting **Show any 100 records**.
-
-    ![Image of selecting the top 100 files from the RawServerMetrics table](./Images/rawservermetrics-top-100.png)
-
-   > **NOTE**: The first time you run this, it can take several seconds to allocate compute resources.
-
-    ![Image of the 100 records from the data](./Images/explore-with-kql-take-100.png)
-
-## Introduction to Kusto Query Language (KQL) and its syntax
-
-Kusto Query Language (KQL) is a query language used to analyze data in Microsoft Azure Data Explorer, which is a part of the Azure Fabric. KQL is designed to be simple and intuitive, making it easy for beginners to learn and use. At the same time, it's also highly flexible and customizable, allowing advanced users to perform complex queries and analysis.
-
-KQL is based on a syntax similar to SQL, but with some key differences. For example, KQL uses a pipe operator (|) instead of a semicolon (;) to separate commands, and it uses a different set of functions and operators for filtering and manipulating data.
-
-One of the key features of KQL is its ability to handle large volumes of data quickly and efficiently. This capability makes it ideal for analyzing logs, telemetry data, and other types of big data. KQL also supports a wide range of data sources, including structured and unstructured data, making it a versatile tool for data analysis.
-
-In the context of Microsoft Fabric, KQL can be used to query and analyze data from various sources, such as application logs, performance metrics, and system events. This can help you gain insights into the health and performance of your applications and infrastructure, and identify issues and opportunities for optimization.
-
-Overall, KQL is a powerful and flexible query language that can help you gain insights into your data quickly and easily, whether you're working with Microsoft Fabric or other data sources. With its intuitive syntax and powerful capabilities, KQL is definitely worth exploring further.
-
-In this module, we focus on the basics of queries against a KQL Database using KQL first and then T-SQL. We'll focus on the basis elements of T-SQL syntax that are used for queries inlcuding:
-
-**SELECT** queries, which are used to retrieve data from one or more tables. For example, you can use a SELECT query to get the names and salaries of all employees in a company.
-
-**WHERE** queries, which are used to filter the data based on certain conditions. For example, you can use a WHERE query to get the names of employees who work in a specific department or who have a salary above a certain amount.
-
-**GROUP BY** queries, which are used to group the data by one or more columns and perform aggregate functions on them. For example, you can use a GROUP BY query to get the average salary of employees by department or by country.
-
-**ORDER BY** queries, which are used to sort the data by one or more columns in ascending or descending order. For example, you can use an ORDER BY query to get the names of employees sorted by their salaries or by their last names.
-
-   > **WARNING:** You cannot create Power BI Reports from querysets with **T-SQL** because Power BI does not support T-SQL as a data source. **Power BI only supports KQL as the native query language for querysets**. If you want to use T-SQL to query your data in Microsoft Fabric, you need to use the T-SQL endpoint that emulates Microsoft SQL Server and allows you to run T-SQL queries on your data. However, the T-SQL endpoint has some limitations and differences from the native SQL Server, and it does not support creating or publishing reports to Power BI.
-
-> **NOTE**: Besides the approach to pull up a query window within shown earlier, you can always press the **Explore your data** button in the main KQL Database panel..
-
-   ![Image of the Explore your data button](./Images/explore-your-data.png)
-
-## ```SELECT``` data from our sample dataset using KQL
-
-1. In this query, we pull 100 records from the Trips table. We use the ```take``` keyword to ask the engine to return 100 records.
-
-    ```kusto
-    
-    Trips
+    ```kql
+    Bikestream
     | take 100
     ```
 
     > **NOTE:**
-    > The Pipe ```|``` character is used for two purposes in KQL includuing to separate query operators in a tabular expression statement. It is also used as a logical OR operator within square or round brackets to denote that you may specify one of the items separated by the pipe character.
+    > The Pipe ( | ) character is used for two purposes in KQL including to separate query operators in a tabular expression statement. It is also used as a logical OR operator within square or round brackets to denote that you may specify one of the items separated by the pipe character.
 
-1. We can be more precise by adding specific attributes we would like to query using the ```project``` keyword and then using the ```take``` keyword to tell the engine how many records to return.
+1. Select the query code and run it to return 100 rows from the table.
 
-    > **NOTE:** the use of ```//``` denotes comments used within the Microsoft Fabric ***Explore your data*** query tool.
+   ![Screenshot of the KQL query editor.](./Images/kql-take-100-query.png)
 
-    ```kusto
-    
+    You can be more precise by adding specific attributes you want to query using the `project` keyword and then using the `take` keyword to tell the engine how many records to return.
+
+1. Type, select, and run the following query:
+
+    ```kql
     // Use 'project' and 'take' to view a sample number of records in the table and check the data.
-    Trips 
-    | project vendor_id, trip_distance
+    Bikestream
+    | project Street, No_Bikes
     | take 10
     ```
 
-1. Another common practice in analysis is renaming columns in our queryset to make them more user friendly. This can be accomplished by using the new column name followed by the equals sign and the column we wish to rename.
+    > **NOTE:** The use of // denotes a comment.
 
-    ```kusto
-    
-    Trips 
-    | project vendor_id, ["Trip Distance"] = trip_distance
+    Another common practice in the analysis is renaming columns in our queryset to make them more user-friendly.
+
+1. Try the following query:
+
+    ```kql
+    Bikestream 
+    | project Street, ["Number of Empty Docks"] = No_Empty_Docks
     | take 10
     ```
 
-1. We may also want to summarize the trips to see how many miles were traveled:
+### Summarize data by using KQL
 
-    ```kusto
-    
-    Trips
-    | summarize ["Total Trip Distance"] = sum(trip_distance)
+You can use the *summarize* keyword with a function to aggregate and otherwise manipulate data.
+
+1. Try the following query, which uses the **sum** function to summarize the rental data to see how many bikes are available in total:
+
+    ```kql
+
+    Bikestream
+    | summarize ["Total Number of Bikes"] = sum(No_Bikes)
     ```
 
-## ```GROUP BY``` data from our sample dataset using KQL
+    You can group the summarized data by a specified column or expression.
 
-1. Then we may want to ***group by*** the pickup location that we do with the ```summarize``` operator. We're also able to use the ```project``` operator that allows us to select and rename the columns you want to include in your output. In this case, we group by borough within the NY Taxi system to provide our users with the total distance traveled from each borough.
+1. Run the following query to group the number of bikes by neighbourhood to determine the amount of available bikes in each neighbourhood:
 
-```kusto
-
-Trips
-| summarize ["Total Trip Distance"] = sum(trip_distance) by pickup_boroname
-| project Borough = pickup_boroname, ["Total Trip Distance"]
-```
-
-1. In this case we have a blank value, which is never good for analysis, and we can use the ```case``` function along with the ```isempty``` and the ```isnull``` functions to categorize into a ***Unidentified*** category for follow-up.
-
-```kusto
-
-Trips
-| summarize ["Total Trip Distance"] = sum(trip_distance) by pickup_boroname
-| project Borough = case(isempty(pickup_boroname) or isnull(pickup_boroname), "Unidentified", pickup_boroname), ["Total Trip Distance"]
-```
-
-## ```ORDER BY``` data from our sample dataset using KQL
-
-To make more sense of our data, we typically order it by a column, and this process is done in KQL with either a ```sort by``` or ```order by``` operator and they act the same way.
- 
-```kusto
-
-// using the sort by operators
-Trips
-| summarize ["Total Trip Distance"] = sum(trip_distance) by pickup_boroname
-| project Borough = case(isempty(pickup_boroname) or isnull(pickup_boroname), "Unidentified", pickup_boroname), ["Total Trip Distance"]
-| sort by Borough asc 
-
-// order by operator has the same result as sort by
-Trips
-| summarize ["Total Trip Distance"] = sum(trip_distance) by pickup_boroname
-| project Borough = case(isempty(pickup_boroname) or isnull(pickup_boroname), "Unidentified", pickup_boroname), ["Total Trip Distance"]
-| sort by Borough asc 
-```
-
-## ```WHERE``` clause to filter data in our sample KQL Query
-
-Unlike SQL, our WHERE clause is immediately called in our KQL Query. We can still use the ```and``` and the ```or``` logical operators within the where clause and it evaluates to true or false against the table and can be simple or a complex expression that might involve multiple columns, operators, and functions.
-
-```kusto
-
-// let's filter our dataset immediately from the source by applying a filter directly after the table.
-Trips
-| where pickup_boroname == "Manhattan"
-| summarize ["Total Trip Distance"] = sum(trip_distance) by pickup_boroname
-| project Borough = case(isempty(pickup_boroname) or isnull(pickup_boroname), "Unidentified", pickup_boroname), ["Total Trip Distance"]
-| sort by Borough asc
-
-```
-
-## Use T-SQL to query summary information
-
-KQL Database doesn't support T-SQL natively, but it provides a T-SQL endpoint that emulates Microsoft SQL Server and allows you to run T-SQL queries on your data. However, the T-SQL endpoint has some limitations and differences from the native SQL Server. For example, it doesn't support creating, altering, or dropping tables, or inserting, updating, or deleting data. It also doesn't support some T-SQL functions and syntax that aren't compatible with KQL. It was created to allow systems that didn't support KQL to use T-SQL to query the data within a KQL Database. So, it's recommended to use KQL as the primary query language for KQL Database, as it offers more capabilities and performance than T-SQL. You can also use some SQL functions that are supported by KQL, such as count, sum, avg, min, max, etc. 
-
-## ```SELECT``` data from our sample dataset using T-SQL
-
-1. In this query, we pull the first 100 records from the **Trips** table using the ```TOP``` clause. 
-
-    ```sql
-    // We can use the TOP clause to limit the number of records returned
-    
-    SELECT TOP 100 * from Trips
+    ```kql
+    Bikestream
+    | summarize ["Total Number of Bikes"] = sum(No_Bikes) by Neighbourhood
+    | project Neighbourhood, ["Total Number of Bikes"]
     ```
 
-1. If you use the ```//```, which is a comment in the ***Explore your data** tool within the KQL database, you can't highlight it when executing T-SQL queries, rather you should use the standard ```--``` SQL comments notation. this double-hypen will also tell the KQL Engine to expect T-SQL in Azure Data Explorer.
+    If any of the bike points has a null or empty entry for neighbourhood, the results of summarization will include a blank value, which is never good for analysis.
 
-    ```sql
-    -- instead of using the 'project' and 'take' keywords we simply use a standard SQL Query
-    SELECT TOP 10 vendor_id, trip_distance
-    FROM Trips
+1. Modify the query as shown here to use the *case* function along with the *isempty* and *isnull* functions to group all trips for which the neighbourhood is unknown into a ***Unidentified*** category for follow-up.
+
+    ```kql
+    Bikestream
+    | summarize ["Total Number of Bikes"] = sum(No_Bikes) by Neighbourhood
+    | project Neighbourhood = case(isempty(Neighbourhood) or isnull(Neighbourhood), "Unidentified", Neighbourhood), ["Total Number of Bikes"]
     ```
 
-1. Again, you can see that standard T-SQL features work fine with the query where we rename trip_distance to a more user friendly name.
+    >**Note**: As this sample dataset is well-maintained, you might not have an Unidentified field in the query result.
 
-    ```sql
-    
-    -- No need to use the 'project' or 'take' operators as standard T-SQL Works
-    SELECT TOP 10 vendor_id, trip_distance as [Trip Distance]
-    from Trips
+### Sort data by using KQL
+
+To make more sense of our data, we typically order it by a column, and this process is done in KQL with either a *sort by* or *order by* operator (they act the same way).
+
+1. Try the following query:
+
+    ```kql
+    Bikestream
+    | summarize ["Total Number of Bikes"] = sum(No_Bikes) by Neighbourhood
+    | project Neighbourhood = case(isempty(Neighbourhood) or isnull(Neighbourhood), "Unidentified", Neighbourhood), ["Total Number of Bikes"]
+    | sort by Neighbourhood asc
     ```
 
-1. We may also want to summarize the trips to see how many miles were traveled:
+1. Modify the query as follows and run it again, and note that the *order by* operator works the same way as *sort by*:
 
-    ```sql
-    Select sum(trip_distance) as [Total Trip Distance]
-    from Trips
-    ```
-     >**NOTE:** The use of the quotations is not necessary in T-SQL compared to the KQL query, also note the `summarize` and `sort by` commands aren't available in T-SQL.
-
-## ```GROUP BY``` data from our sample dataset using T-SQL
-
-1. Then we may want to ***group by*** the pickup location that we do with the ```GROUP BY``` operator. We're also able to use the ```AS``` operator that allows us to select and rename the columns you want to include in your output. In this case, we group by borough within the NY Taxi system to provide our users with the total distance traveled from each borough.
-
-    ```sql
-    SELECT pickup_boroname AS Borough, Sum(trip_distance) AS [Total Trip Distance]
-    FROM Trips
-    GROUP BY pickup_boroname
+    ```kql
+    Bikestream
+    | summarize ["Total Number of Bikes"] = sum(No_Bikes) by Neighbourhood
+    | project Neighbourhood = case(isempty(Neighbourhood) or isnull(Neighbourhood), "Unidentified", Neighbourhood), ["Total Number of Bikes"]
+    | order by Neighbourhood asc
     ```
 
-1. In this case we have a blank value, which is never good for analysis, and we can use the ```CASE``` function along with the ```IS NULL``` function and the ```''``` empty value to categorize into a ***Unidentified*** category for follow-up. 
+### Filter data by using KQL
+
+In KQL, the *where* clause is used to filter data. You can combine conditions in a *where* clause by using *and* and *or* logical operators.
+
+1. Run the following query to filter the bike data to include only bike points in the Chelsea neighbourhood:
+
+    ```kql
+    Bikestream
+    | where Neighbourhood == "Chelsea"
+    | summarize ["Total Number of Bikes"] = sum(No_Bikes) by Neighbourhood
+    | project Neighbourhood = case(isempty(Neighbourhood) or isnull(Neighbourhood), "Unidentified", Neighbourhood), ["Total Number of Bikes"]
+    | sort by Neighbourhood asc
+    ```
+
+## Query data by using Transact-SQL
+
+KQL Database doesn't support Transact-SQL natively, but it provides a T-SQL endpoint that emulates Microsoft SQL Server and allows you to run T-SQL queries on your data. The T-SQL endpoint has some limitations and differences from the native SQL Server. For example, it doesn't support creating, altering, or dropping tables, or inserting, updating, or deleting data. It also doesn't support some T-SQL functions and syntax that aren't compatible with KQL. It was created to allow systems that didn't support KQL to use T-SQL to query the data within a KQL Database. So, it's recommended to use KQL as the primary query language for KQL Database, as it offers more capabilities and performance than T-SQL. You can also use some SQL functions that are supported by KQL, such as count, sum, avg, min, max, and so on.
+
+### Retrieve data from a table by using Transact-SQL
+
+1. In your queryset, add and run the following Transact-SQL query: 
 
     ```sql
-    
+    SELECT TOP 100 * from Bikestream
+    ```
+
+1. Modify the query as follows to retrieve specific columns
+
+    ```sql
+    SELECT TOP 10 Street, No_Bikes
+    FROM Bikestream
+    ```
+
+1. Modify the query to assign an alias that renames **No_Empty_Docks** to a more user-friendly name.
+
+    ```sql
+    SELECT TOP 10 Street, No_Empty_Docks as [Number of Empty Docks]
+    from Bikestream
+    ```
+
+### Summarize data by using Transact-SQL
+
+1. Run the following query to find the total number of bikes available:
+
+    ```sql
+    SELECT sum(No_Bikes) AS [Total Number of Bikes]
+    FROM Bikestream
+    ```
+
+1. Modify the query to group the total number of bikes by neighbourhood:
+
+    ```sql
+    SELECT Neighbourhood, Sum(No_Bikes) AS [Total Number of Bikes]
+    FROM Bikestream
+    GROUP BY Neighbourhood
+    ```
+
+1. Modify the query further to use a *CASE* statement to group bike points with an unknown origin into a ***Unidentified*** category for follow-up. 
+
+    ```sql
     SELECT CASE
-             WHEN pickup_boroname IS NULL OR pickup_boroname = '' THEN 'Unidentified'
-             ELSE pickup_boroname
-           END AS Borough,
-           SUM(trip_distance) AS [Total Trip Distance]
-    FROM Trips
+             WHEN Neighbourhood IS NULL OR Neighbourhood = '' THEN 'Unidentified'
+             ELSE Neighbourhood
+           END AS Neighbourhood,
+           SUM(No_Bikes) AS [Total Number of Bikes]
+    FROM Bikestream
     GROUP BY CASE
-               WHEN pickup_boroname IS NULL OR pickup_boroname = '' THEN 'Unidentified'
-               ELSE pickup_boroname
+               WHEN Neighbourhood IS NULL OR Neighbourhood = '' THEN 'Unidentified'
+               ELSE Neighbourhood
              END;
     ```
 
-## ```ORDER BY``` data from our sample dataset using T-SQL
+### Sort data by using Transact-SQL
 
-1. To make more sense of our data, we typically order it by a column, and this process is done in T-SQL with an ```ORDER BY``` operator. There's no ***SORT BY*** operator in T-SQL
+1. Run the following query to order the grouped results by neighbourhood:
  
     ```sql
-    -- Group by pickup_boroname and calculate the summary statistics of trip_distance
     SELECT CASE
-             WHEN pickup_boroname IS NULL OR pickup_boroname = '' THEN 'unidentified'
-             ELSE pickup_boroname
-           END AS Borough,
-           SUM(trip_distance) AS [Total Trip Distance]
-    FROM Trips
+             WHEN Neighbourhood IS NULL OR Neighbourhood = '' THEN 'Unidentified'
+             ELSE Neighbourhood
+           END AS Neighbourhood,
+           SUM(No_Bikes) AS [Total Number of Bikes]
+    FROM Bikestream
     GROUP BY CASE
-               WHEN pickup_boroname IS NULL OR pickup_boroname = '' THEN 'unidentified'
-               ELSE pickup_boroname
-             END
-    -- Add an ORDER BY clause to sort by Borough in ascending order
-    ORDER BY Borough ASC;
+               WHEN Neighbourhood IS NULL OR Neighbourhood = '' THEN 'Unidentified'
+               ELSE Neighbourhood
+             END;
+    ORDER BY Neighbourhood ASC;
     ```
-    ## ```WHERE``` clause to filter data in our sample T-SQL Query
+
+### Filter data by using Transact-SQL
     
-1. Unlike KQL, our ```WHERE``` clause would go at end of the T-SQL Statement; however, in this case we have a ```GROUP BY``` clause, which requires us to use the ```HAVING``` statement and we use the new name of the column, in this case **Borough** as the column name to filter from.
+1. Run the following query to filter the grouped data so that only rows having a neighbourhood of "Chelsea" are included in the results
 
     ```sql
-    -- Group by pickup_boroname and calculate the summary statistics of trip_distance
     SELECT CASE
-             WHEN pickup_boroname IS NULL OR pickup_boroname = '' THEN 'unidentified'
-             ELSE pickup_boroname
-           END AS Borough,
-           SUM(trip_distance) AS [Total Trip Distance]
-    FROM Trips
+             WHEN Neighbourhood IS NULL OR Neighbourhood = '' THEN 'Unidentified'
+             ELSE Neighbourhood
+           END AS Neighbourhood,
+           SUM(No_Bikes) AS [Total Number of Bikes]
+    FROM Bikestream
     GROUP BY CASE
-               WHEN pickup_boroname IS NULL OR pickup_boroname = '' THEN 'unidentified'
-               ELSE pickup_boroname
-             END
-    -- Add a having clause due to the GROUP BY statement
-    HAVING Borough = 'Manhattan'
-    -- Add an ORDER BY clause to sort by Borough in ascending order
-    ORDER BY Borough ASC;
-    
+               WHEN Neighbourhood IS NULL OR Neighbourhood = '' THEN 'Unidentified'
+               ELSE Neighbourhood
+             END;
+    HAVING Neighbourhood = 'Chelsea'
+    ORDER BY Neibourhood ASC;
     ```
 
 ## Clean up resources
 
-In this exercise, you have created a KQL database and set up a sample dataset for querying. After that you queried the data using KQL and SQL. When you've finished exploring your KQL database, you can delete the workspace you created for this exercise.
-1. In the bar on the left, select the **icon** for your workspace.
-2. In the ... menu on the toolbar, select **Workspace settings**.
-3. In the **Other** section, select **Remove this workspace**.
+In this exercise, you have created an eventhouse and queried data using KQL and SQL.
+
+When you've finished exploring your KQL database, you can delete the workspace you created for this exercise.
+
+1. In the bar on the left, select the icon for your workspace.
+2. In the toolbar, select **Workspace settings**.
+3. In the **General** section, select **Remove this workspace**.

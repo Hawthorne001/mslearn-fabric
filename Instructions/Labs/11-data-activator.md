@@ -1,22 +1,18 @@
----
-lab:
-    title: 'Use Data Activator in Fabric'
-    module: 'Get started with Data Activator in Microsoft Fabric'
----
-
 # Use Data Activator in Fabric
+
+> **IMPORTANT**: This exercise is deprecated, and will be removed or uodated soon. The instructions are no longer accurate, and the exercise is unsupported.
 
 Data Activator in Microsoft Fabric takes action based on what's happening in your data. Data Activator lets you monitor your data and create triggers to react to your data changes.
 
 This lab takes approximately **30** minutes to complete.
 
-> **Note**: You need a Microsoft *school* or *work* account to complete this exercise. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+> **Note**: You need a [Microsoft Fabric trial](https://learn.microsoft.com/fabric/get-started/fabric-trial) to complete this exercise.
 
 ## Create a workspace
 
 Before working with data in Fabric, create a workspace with the Fabric trial enabled.
 
-1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com), select **Data Activator**.
+1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric`, select **Data Activator**.
 1. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
 1. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
 1. When your new workspace opens, it should be empty.
@@ -180,4 +176,4 @@ If you've finished exploring your Data Activator reflex, you can delete the work
 
 1. In the bar on the left, select the icon for your workspace to view all of the items it contains.
 2. In the **...** menu on the toolbar, select **Workspace settings**.
-3. In the **Other** section, select **Remove this workspace**.
+3. In the **General** section, select **Remove this workspace**.

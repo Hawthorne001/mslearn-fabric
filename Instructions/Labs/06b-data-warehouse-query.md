@@ -10,13 +10,13 @@ In Microsoft Fabric, a data warehouse provides a relational database for large-s
 
 This lab will take approximately **30** minutes to complete.
 
-> **Note**: You need a Microsoft *school* or *work* account to complete this exercise. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+> **Note**: You need a [Microsoft Fabric trial](https://learn.microsoft.com/fabric/get-started/fabric-trial) to complete this exercise.
 
 ## Create a workspace
 
 Before working with data in Fabric, create a workspace with the Fabric trial enabled.
 
-1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com), select **Synapse Data Warehouse**.
+1. Navigate to the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric` in a browser, and sign in with your Fabric credentials.
 1. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
 1. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
 1. When your new workspace opens, it should be empty.
@@ -27,8 +27,9 @@ Before working with data in Fabric, create a workspace with the Fabric trial ena
 
 Now that you have a workspace, it's time to create a data warehouse.
 
-1. At the bottom left, ensure that the **Data Warehouse** experience is selected.
-1. On the **Home** page, select **Sample warehouse** and create a new data warehouse named **sample-dw**.
+1. On the menu bar on the left, select **Create**. In the *New* page, under the *Data Warehouse* section, select **Sample warehouse** and create a new data warehouse named **sample-dw**.
+
+    >**Note**: If the **Create** option is not pinned to the sidebar, you need to select the ellipsis (**...**) option first.
 
     After a minute or so, a new warehouse will be created and populated with sample data for a taxi ride analysis scenario.
 
@@ -183,5 +184,5 @@ In this exercise, you have used queries to get insights of the data in a Microso
 If you've finished exploring your data warehouse, you can delete the workspace you created for this exercise.
 
 1. In the bar on the left, select the icon for your workspace to view all of the items it contains.
-2. In the **...** menu on the toolbar, select **Workspace settings**.
-3. In the **Other** section, select **Remove this workspace**.
+1. Select **Workspace settings** and in the **General** section, scroll down and select **Remove this workspace**.
+1. Select **Delete** to delete the workspace.

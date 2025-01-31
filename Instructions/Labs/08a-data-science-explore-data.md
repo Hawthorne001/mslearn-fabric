@@ -1,23 +1,22 @@
 ---
 lab:
-    title: 'Create and use notebooks for data exploration'
+    title: 'Explore data for data science with notebooks in Microsoft Fabric'
     module: 'Explore data for data science with notebooks in Microsoft Fabric'
 ---
 
-# Use notebooks to explore data in Microsoft Fabric
+# Explore data for data science with notebooks in Microsoft Fabric
 
 In this lab, we'll use notebooks for data exploration. Notebooks are a powerful tool for interactively exploring and analyzing data. During this exercise, we'll learn how to create and use notebooks to explore a dataset, generate summary statistics, and create visualizations to better understand the data. By the end of this lab, you'll have a solid understanding of how to use notebooks for data exploration and analysis.
 
 This lab takes approximately **30** minutes to complete.
 
-> **Note**: You need a Microsoft *school* or *work* account to complete this exercise. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+> **Note**: You need a [Microsoft Fabric trial](https://learn.microsoft.com/fabric/get-started/fabric-trial) to complete this exercise.
 
 ## Create a workspace
 
 Before working with data in Fabric, create a workspace with the Fabric trial enabled.
 
-1. Navigate to the Microsoft Fabric home page at `https://app.fabric.microsoft.com` in a browser, and if necessary, sign in with your Fabric credentials.
-1. On the Fabric home page, select **Synapse Data Science**.
+1. Navigate to the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric` in a browser, and sign in with your Fabric credentials.
 1. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
 1. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
 1. When your new workspace opens, it should be empty.
@@ -28,7 +27,9 @@ Before working with data in Fabric, create a workspace with the Fabric trial ena
 
 To train a model, you can create a *notebook*. Notebooks provide an interactive environment in which you can write and run code (in multiple languages) as *experiments*.
 
-1. In the **Synapse Data Science** home page, create a new **Notebook**.
+1. On the menu bar on the left, select **Create**. In the *New* page, under the *Data Science* section, select **Notebook**. Give it a unique name of your choice.
+
+    >**Note**: If the **Create** option is not pinned to the sidebar, you need to select the ellipsis (**...**) option first.
 
     After a few seconds, a new notebook containing a single *cell* will open. Notebooks are made up of one or more cells that can contain *code* or *markdown* (formatted text).
 
@@ -185,7 +186,7 @@ Let's generate visualizations such as scatter plots and box plots to uncover pat
    import matplotlib.pyplot as plt
    import seaborn as sns
 
-   # Scatter plot of Quantity vs. Price
+   # Scatter plot of BMI vs. Target variable
    plt.figure(figsize=(8, 6))
    sns.scatterplot(x='BMI', y='Y', data=df)
    plt.title('BMI vs. Target variable')
@@ -296,4 +297,4 @@ If you've finished exploring your model and experiments, you can delete the work
 
 1. In the bar on the left, select the icon for your workspace to view all of the items it contains.
 2. In the **...** menu on the toolbar, select **Workspace settings**.
-3. In the **Other** section, select **Remove this workspace**.
+3. In the **General** section, select **Remove this workspace**.

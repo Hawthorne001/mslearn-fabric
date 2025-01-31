@@ -14,13 +14,13 @@ For this experience, you'll build the code across multiple notebook code cells, 
 
 Because you're also working with a sample dataset, the optimization doesn't reflect what you may see in production at scale; however, you can still see improvement and when every millisecond counts, optimization is key.
 
-> **Note**: You need a Microsoft *school* or *work* account to complete this exercise. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+> **Note**: You need a [Microsoft Fabric trial](https://learn.microsoft.com/fabric/get-started/fabric-trial) to complete this exercise.
 
 ## Create a workspace
 
 Before working with data in Fabric, create a workspace with the Fabric trial enabled.
 
-1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com), select **Synapse Data Engineering**.
+1. Navigate to the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric` in a browser and sign in with your Fabric credentials.
 1. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
 1. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
 1. When your new workspace opens, it should be empty.
@@ -31,7 +31,7 @@ Before working with data in Fabric, create a workspace with the Fabric trial ena
 
 Start by creating a new lakehouse, and a destination folder in the lakehouse.
 
-1. From your workspace, select **+ New > Lakehouse**, supply a name, and **Create**.
+1. From your workspace, select **+ New item > Lakehouse**, supply a name, and **Create**.
 
     > **Note:** It may take a few minutes to create a new lakehouse with no **Tables** or **Files**.
 
@@ -39,7 +39,7 @@ Start by creating a new lakehouse, and a destination folder in the lakehouse.
 
 1. From **Files**, select the **[...]** to create **New subfolder** named **RawData**.
 
-1. From the Lakehouse Explorer within the lakehouse, select **Files > ... > Properties**.
+1. From the Lakehouse Explorer within the lakehouse, select **RawData > ... > Properties**.
 
 1. Copy the **ABFS path** for the **RawData** folder to an empty notepad for later use, which should look something like:
     `abfss://{workspace_name}@onelake.dfs.fabric.microsoft.com/{lakehouse_name}.Lakehouse/Files/{folder_name}/{file_name}`
@@ -86,15 +86,15 @@ Create a new Fabric notebook and connect to external data source with PySpark.
 1. Insert the following code into a **new code cell**:
 
     ```python
-        # Declare file name    
-        file_name = "yellow_taxi"
+    # Declare file name    
+    file_name = "yellow_taxi"
     
-        # Construct destination path
-        output_parquet_path = f"**InsertABFSPathHere**/{file_name}"
-        print(output_parquet_path)
+    # Construct destination path
+    output_parquet_path = f"**InsertABFSPathHere**/{file_name}"
+    print(output_parquet_path)
         
-        # Load the first 1000 rows as a Parquet file
-        blob_df.limit(1000).write.mode("overwrite").parquet(output_parquet_path)
+    # Load the first 1000 rows as a Parquet file
+    blob_df.limit(1000).write.mode("overwrite").parquet(output_parquet_path)
     ```
 
 1. Add your **RawData** ABFS path and select **&#9655; Run Cell** to write 1000 rows to a yellow_taxi.parquet file.
@@ -122,10 +122,10 @@ Likely, your data ingestion task doesn't end with only loading a file. Delta tab
     filtered_df = raw_df.withColumn("dataload_datetime", current_timestamp())
     
     # Filter columns to exclude any NULL values in storeAndFwdFlag
-    filtered_df = filtered_df.filter(raw_df["storeAndFwdFlag"].isNotNull())
+    filtered_df = filtered_df.filter(col("storeAndFwdFlag").isNotNull())
     
     # Load the filtered data into a Delta table
-    table_name = "yellow_taxi"  # Replace with your desired table name
+    table_name = "yellow_taxi"
     filtered_df.write.format("delta").mode("append").saveAsTable(table_name)
     
     # Display results
@@ -144,42 +144,6 @@ Likely, your data ingestion task doesn't end with only loading a file. Delta tab
     ![Screenshot of successful output displaying a single row](Images/notebook-transform-result.png)
 
 You've now successfully connected to external data, written it to a parquet file, loaded the data into a DataFrame, transformed the data, and loaded it to a Delta table.
-
-## Optimize Delta table writes
-
-You're probably using big data in your organization and that's why you chose Fabric notebooks for data ingestion, so let's also cover how to optimize the ingestion and reads for your data. First, we'll repeat the steps to transform and write to a Delta table with write optimizations included.
-
-1. Create a new code cell and insert the following code:
-
-    ```python
-    from pyspark.sql.functions import col, to_timestamp, current_timestamp, year, month
- 
-    # Read the parquet data from the specified path
-    raw_df = spark.read.parquet(output_parquet_path)    
-
-    # Add dataload_datetime column with current timestamp
-    opt_df = raw_df.withColumn("dataload_datetime", current_timestamp())
-    
-    # Filter columns to exclude any NULL values in storeAndFwdFlag
-    opt_df = opt_df.filter(opt_df["storeAndFwdFlag"].isNotNull())
-    
-    # Enable V-Order
-    spark.conf.set("spark.sql.parquet.vorder.enabled", "true")
-    
-    # Enable automatic Delta optimized write
-    spark.conf.set("spark.microsoft.delta.optimizeWrite.enabled", "true")
-    
-    # Load the filtered data into a Delta table
-    table_name = "yellow_taxi_opt"  # New table name
-    opt_df.write.format("delta").mode("append").saveAsTable(table_name)
-    
-    # Display results
-    display(opt_df.limit(1))
-    ```
-
-1. Confirm you have the same results as before the optimization code.
-
-Now, take note of the run times for both code blocks. Your times will vary, but you can see a clear performance boost with the optimized code.
 
 ## Analyze Delta table data with SQL queries
 
@@ -202,33 +166,18 @@ This lab is focused on data ingestion, which really explains the *extract, trans
     display(table_df.limit(10))
     ```
 
-1. Create another code cell, and insert this code as well:
+1. Select **&#9655; Run Cell** next to the code cell.
 
-    ```python
-    # Load table into df
-    delta_table_name = "yellow_taxi_opt"
-    opttable_df = spark.read.format("delta").table(delta_table_name)
-    
-    # Create temp SQL table
-    opttable_df.createOrReplaceTempView("yellow_taxi_opt")
-    
-    # SQL Query to confirm
-    opttable_df = spark.sql('SELECT * FROM yellow_taxi_opt')
-    
-    # Display results
-    display(opttable_df.limit(10))
-    ```
+     Many data analysts are comfortable working with SQL syntax. Spark SQL is a SQL language API in Spark that you can use to run SQL statements, or even persist data in relational tables.
 
-1. Now, select the &#9660; arrow next to the **Run Cell** button for the first of these two queries, and from the drop-down select **Run this cell and below**.
-
-    This will run the last two code cells. Notice the execution time difference between querying the table with non optimized data and a table with optimized data.
+   The code you just ran creates a relational *view* of the data in a dataframe, and then uses the **spark.sql** library to embed Spark SQL syntax within your Python code and query the view and return the results as a dataframe.
 
 ## Clean up resources
 
-In this exercise, you have used notebooks with PySpark in Fabric to load data and save it to Parquet. You then used that Parquet file to further transform the data, and optimized Delta table writes. Finally you used SQL to query the Delta tables.
+In this exercise, you have used notebooks with PySpark in Fabric to load data and save it to Parquet. You then used that Parquet file to further transform the data. Finally you used SQL to query the Delta tables.
 
 When you're finished exploring, you can delete the workspace you created for this exercise.
 
 1. In the bar on the left, select the icon for your workspace to view all of the items it contains.
-2. In the **...** menu on the toolbar, select **Workspace settings**.
-3. In the **Other** section, select **Remove this workspace**.
+1. Select **Workspace settings** and in the **General** section, scroll down and select **Remove this workspace**.
+1. Select **Delete** to delete the workspace.

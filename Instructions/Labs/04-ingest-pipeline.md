@@ -12,13 +12,13 @@ Fabric also supports Apache Spark, enabling you to write and run code to process
 
 This lab will take approximately **60** minutes to complete.
 
-> **Note**: You need a Microsoft *school* or *work* account to complete this exercise. If you don't have one, you can [sign up for a trial of Microsoft Office 365 E3 or higher](https://www.microsoft.com/microsoft-365/business/compare-more-office-365-for-business-plans).
+> **Note**: You need a [Microsoft Fabric trial](https://learn.microsoft.com/fabric/get-started/fabric-trial) to complete this exercise.
 
 ## Create a workspace
 
 Before working with data in Fabric, create a workspace with the Fabric trial enabled.
 
-1. On the [Microsoft Fabric home page](https://app.fabric.microsoft.com), select **Synapse Data Engineering**.
+1. Navigate to the [Microsoft Fabric home page](https://app.fabric.microsoft.com/home?experience=fabric) at `https://app.fabric.microsoft.com/home?experience=fabric` in a browser, and sign in with your Fabric credentials.
 1. In the menu bar on the left, select **Workspaces** (the icon looks similar to &#128455;).
 1. Create a new workspace with a name of your choice, selecting a licensing mode that includes Fabric capacity (*Trial*, *Premium*, or *Fabric*).
 1. When your new workspace opens, it should be empty.
@@ -29,27 +29,31 @@ Before working with data in Fabric, create a workspace with the Fabric trial ena
 
 Now that you have a workspace, it's time to create a data lakehouse into which you will ingest data.
 
-1. In the **Synapse Data Engineering** home page, create a new **Lakehouse** with a name of your choice.
+1. On the menu bar on the left, select **Create**. In the *New* page, under the *Data Engineering* section, select **Lakehouse**. Give it a unique name of your choice.
+
+    >**Note**: If the **Create** option is not pinned to the sidebar, you need to select the ellipsis (**...**) option first.
 
     After a minute or so, a new lakehouse with no **Tables** or **Files** will be created.
 
-1. On the **Lake view** tab in the pane on the left, in the **...** menu for the **Files** node, select **New subfolder** and create a subfolder named **new_data**.
+1. On the **Explorer** pane on the left, in the **...** menu for the **Files** node, select **New subfolder** and create a subfolder named **new_data**.
 
 ## Create a pipeline
 
 A simple way to ingest data is to use a **Copy Data** activity in a pipeline to extract the data from a source and copy it to a file in the lakehouse.
 
-1. On the **Home** page for your lakehouse, select **New data pipeline**, and create a new data pipeline named **Ingest Sales Data**.
-2. If the **Copy Data** wizard doesn't open automatically, select **Copy Data** in the pipeline editor page.
-3. In the **Copy Data** wizard, on the **Choose a data source** page, in the **data sources** section, select the **Generic protocol** tab and then select **HTTP**.
+1. On the **Home** page for your lakehouse, select **Get data** and then select **New data pipeline**, and create a new data pipeline named **Ingest Sales Data**.
+2. If the **Copy Data** wizard doesn't open automatically, select **Copy Data > Use copy assistant** in the pipeline editor page.
+3. In the **Copy Data** wizard, on the **Choose data source** page, type HTTP in the search bar and then select **HTTP** in the **New sources** section.
+
 
     ![Screenshot of the Choose data source page.](./Images/choose-data-source.png)
 
-4. Select **Next** and then select **Create new connection** and enter the following settings for the connection to your data source:
+4. In the **Connect to data source** pane, enter the following settings for the connection to your data source:
     - **URL**: `https://raw.githubusercontent.com/MicrosoftLearning/dp-data/main/sales.csv`
     - **Connection**: Create new connection
     - **Connection name**: *Specify a unique name*
-    - **Authentication kind**: Basic (*Leave the username and password blank*)
+    - **Data gateway**: (none)
+    - **Authentication kind**: Anonymous
 5. Select **Next**. Then ensure the following settings are selected:
     - **Relative URL**: *Leave blank*
     - **Request method**: GET
@@ -64,8 +68,7 @@ A simple way to ingest data is to use a **Copy Data** activity in a pipeline to 
     - **First row as header**: Selected
     - **Compression type**: None
 7. Select **Preview data** to see a sample of the data that will be ingested. Then close the data preview and select **Next**.
-8. On the **Choose data destination** page, select your existing lakehouse. Then select **Next**.
-9. Set the following data destination options, and then select **Next**:
+8. On the **Connect to data destination** page, set the following data destination options, and then select **Next**:
     - **Root folder**: Files
     - **Folder path name**: new_data
     - **File name**: sales.csv
@@ -140,7 +143,7 @@ A simple way to ingest data is to use a **Copy Data** activity in a pipeline to 
 Now that you've implemented a notebook to transform data and load it into a table, you can incorporate the notebook into a pipeline to create a reusable ETL process.
 
 1. In the hub menu bar on the left select the **Ingest Sales Data** pipeline you created previously.
-2. On the **Activities** tab, in the **More activities** list, select **Delete data**. Then position the new **Delete data**  activity to the left of the **Copy data** activity and connect its **On completion** output to the **Copy data** activity, as shown here:
+2. On the **Activities** tab, in the **All activities** list, select **Delete data**. Then position the new **Delete data**  activity to the left of the **Copy data** activity and connect its **On completion** output to the **Copy data** activity, as shown here:
 
     ![Screenshot of a pipeline with Delete data and Copy data activities.](./Images/delete-data-activity.png)
 
@@ -148,8 +151,7 @@ Now that you've implemented a notebook to transform data and load it into a tabl
     - **General**:
         - **Name**: Delete old files
     - **Source**
-        - **Data store type**: Workspace
-        - **Workspace data store**: *Your lakehouse*
+        - **Connection**: *Your lakehouse*
         - **File path type**: Wildcard file path
         - **Folder path**: Files / **new_data**
         - **Wildcard file name**: *.csv        
@@ -181,6 +183,8 @@ Now that you've implemented a notebook to transform data and load it into a tabl
 
     ![Screenshot of a pipeline with a Dataflow activity.](./Images/pipeline-run.png)
 
+> Note: In case you receive the error message *Spark SQL queries are only possible in the context of a lakehouse. Please attach a lakehouse to proceed*: Open your notebook, select the lakehouse you created on the left pane, select **Remove all Lakehouses** and then add it again. Go back to the pipeline designer and select **&#9655; Run**.
+
 8. In the hub menu bar on the left edge of the portal, select your lakehouse.
 9. In the **Explorer** pane, expand **Tables** and select the **new_sales** table to see a preview of the data it contains. This table was created by the notebook when it was run by the pipeline.
 
@@ -193,5 +197,5 @@ In this exercise, you've learned how to implement a pipeline in Microsoft Fabric
 If you've finished exploring your lakehouse, you can delete the workspace you created for this exercise.
 
 1. In the bar on the left, select the icon for your workspace to view all of the items it contains.
-2. In the **...** menu on the toolbar, select **Workspace settings**.
-3. In the **Other** section, select **Remove this workspace**.
+1. Select **Workspace settings** and in the **General** section, scroll down and select **Remove this workspace**.
+1. Select **Delete** to delete the workspace.
